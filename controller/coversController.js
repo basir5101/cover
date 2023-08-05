@@ -5,9 +5,13 @@ const createInvoiceService = async (data) => {
     console.log('starting')
     const { assignment_topic, course_title, course_code, student_name, student_id, student_year, student_semester, student_session, student_department, teacher_name, teacher_position, teacher_department, teacher_university, submission_date } = data;
     const imageUrl = `http://localhost:3000/images/logo/bsmrstu.jpg`;
+    const launchOptions = {
+        args: ['--no-sandbox'],
+        headless: "new"
+    };
 
-
-    const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+    const browser = await puppeteer.launch(launchOptions);
+    // const browser = await puppeteer.launch({ headless: "new" });
     const page = await browser.newPage();
 
     const htmlContent =
@@ -15,7 +19,7 @@ const createInvoiceService = async (data) => {
             <head>            
                 <style>
                     body {
-                        margin: 200px 150px;
+                        margin: 70px;
                         font-family: 'Times New Roman', Times, serif;
                     }
             
@@ -58,8 +62,8 @@ const createInvoiceService = async (data) => {
                     TECHNOLOGY UNIVERSITY
                 </h1>
                 <br />
-                <div style="text-align: center;">
-                    <img style="height: 150px; margin: 0 auto;" src="${imageUrl}" alt="bsmrstu logo">
+                <div style='display: flex; justify-content: center; align-items: center'>
+                    <img style='height: 150px;' src=${imageUrl} alt="bsmrstu logo">
                 </div>
                 <h3 style="text-align: center; color: #2d7136;">GOPALGANJ-8100</h3>
                 <br />
@@ -81,25 +85,25 @@ const createInvoiceService = async (data) => {
                     <tbody>
                         <tr>
                             <td>
-                                <div style="font-size:25px;"><strong>Name: </strong> ${student_name} </div>
-                                <div style="font-size:25px;"><strong>Student Id: </strong>  ${student_id} </div>
-                                <div style="font-size:25px;"><strong>Year: </strong> ${student_year} </div>
-                                <div style="font-size:25px;"><strong>Semester: </strong> ${student_semester} </div>
-                                <div style="font-size:25px;"><strong>Session: </strong> ${student_session} </div>
-                                <div style="font-size:25px;">Department of ${student_department}</div>
-                                <div style="font-size:25px;">Bangabandhu Sheikh Mujibur Rahman
+                                <div><strong>Name: </strong> ${student_name} </div>
+                                <div><strong>Student Id: </strong>  ${student_id} </div>
+                                <div><strong>Year: </strong> ${student_year} </div>
+                                <div><strong>Semester: </strong> ${student_year} </div>
+                                <div><strong>Session: </strong> ${student_semester} </div>
+                                <div>Department of ${student_department}</div>
+                                <div>Bangabandhu Sheikh Mujibur Rahman
                                     Science & Technology University,
                                     <br>
                                     Gopalganj-8100
                                 </div>
                             </td>
                             <td>
-                                <div style="font-size:25px;"><strong>Name: </strong> ${teacher_name} </div>
-                                <div style="font-size:25px;"> ${teacher_position} </div>
+                                <div><strong>Name: </strong> ${teacher_name} </div>
+                                <div> ${teacher_position} </div>
                                 <br>
                                 <br>
-                                <div style="font-size:25px;">Department of ${teacher_department} </div>
-                                <div style="font-size:25px;"> ${teacher_university} </div>
+                                <div>Department of ${teacher_department} </div>
+                                <div> ${teacher_university} </div>
                             </td>
                         </tr>
                     </tbody>
@@ -108,8 +112,6 @@ const createInvoiceService = async (data) => {
                 <div style="font-size: 20px;">Date of Submission: ${submission_date} </div>
             </body>
         </html>`
-
-    // await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
     await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
 
     const buffer = await page.pdf({
@@ -120,10 +122,9 @@ const createInvoiceService = async (data) => {
             bottom: '20px',
             left: '20px'
         },
+        scale: 0.8, // Adjust this value as needed
         printBackground: true,
     });
-
-
     await browser.close();
 
     return { buffer, htmlContent }
